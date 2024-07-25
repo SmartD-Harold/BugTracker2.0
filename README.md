@@ -1,14 +1,32 @@
 # BugTracker Backend
 
+專案資料
+--- 
+
+- [需求規格書](/7I_gaOb2RDapMTfWYIMBIg)
+- [6. 設計草稿圖](/q8Hee0FERkaOxq-QJgYyxw)
+- [7. 需求規劃](/gs5rkULvTR-_KIhxpwZv_w)
+- [8.使用者故事](/N7a5fUirSc6PVXRJu4eygg)
+- [9.軟體架構](/sWslO2XsRt-c6Chp-fT-aQ)
+- [10. 前端開發](/OzDM4t8NQRGT8chujQsWYQ)
+- [11. 實際畫面](/lVbEK4ZvTDe35v_cBn6v-Q)
+- [補充：專案規劃](/ffdWPV0ESxOkYjR1SEtBug)
+- [審查程式碼 CodeReview](/oHJ8GsHTRKmIaZQ9WSYslg)
+- [和今網雲登入&資料交換](/RSGvynHcTd6Qsmg9b3ciSg)
+
 ## 目錄
 
-- [開發環境](#開發環境)
-    - [👉 Node.js](#-nodejs)
-    - [👉 npm](#-npm)
-- [專案運行](#專案運行)
-- [專案結構](#專案結構)
-- [命名規範](#命名規範)
-- [注意事項](#注意事項)
+- [BugTracker Backend](#bugtracker-backend)
+  - [專案資料](#專案資料)
+  - [目錄](#目錄)
+    - [開發環境](#開發環境)
+      - [👉 Node.js](#-nodejs)
+      - [👉 npm](#-npm)
+    - [專案運行](#專案運行)
+    - [專案結構 - NestJS](#專案結構---nestjs)
+    - [命名規範](#命名規範)
+    - [注意事項](#注意事項)
+      - [Database](#database)
 
 ### 開發環境
 #### 👉 Node.js
