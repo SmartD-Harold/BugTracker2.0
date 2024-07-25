@@ -1,0 +1,78 @@
+
+version: '3.9'
+# 1.DockerCompose Project Name:bug_tracker(mysql,mantisbt,supertokens,redis,n8n,meilisearch)
+# 2.DockerCompose Project Name:bug_tracker_frontend(VueJS)
+# <this>3.DockerCompose Project Name:bug_tracker_backend(NestJS)
+# https://juejin.cn/post/7222840421542936634
+name: "bug_tracker_backend"
+
+services:
+  api:
+    build:
+      context: docker/dockerfile/nestjs
+      dockerfile: Dockerfile
+    image: bug_tracker/backend-nestjs
+    container_name: my-backend-api
+    networks:
+      - bug_tracker_mynet
+    ports:
+      # 容器預設Port:3000
+      - 3000:3000
+    environment:
+      # NestJS運行環境：
+      - NODE_ENV=development
+      # HTTPS
+      - HTTPS=true
+      ## Database 資料庫：Docker Name
+#      - DATABASE_HOST=my-mysql
+#      - MANTISBT_DATABASE_HOST=my-mysql
+      ## MantisBT Sever：Docker Name
+#      - MANTISBT_HOST=my-mantisbt
+      ## Backend Owner SuperToken Auth Service：Docker Name
+#      - SUPER_TOKENS_HOST=my-supertokens
+      ## Frontend Server：Docker Name
+#      - FRONTEND_HOST=my-frontend
+      ## Redis Cache Server：Docker Name 
+#      - REDIS_HOST=my-redis
+      ## Self Backend Server：Docker Name
+#      - BACKEND_HOST=my-backend-api
+      ## SmartDaily Auth Service：API Domain Name
+#      - SMARTDAILY_AUTH_HOST=https://knst-enterprise-api-dev.kingnetsmart.com.tw
+    env_file:
+      # loading environment variables from a file
+      - config/production.env
+    volumes:
+      # 程式碼主目錄
+#      - ./dist/:/dist/
+      - ./node_modules/:/node_modules/
+      # Google Cloud Storage 金鑰
+      - /Users/harold/MYKEYS/google-cloud-storage/bugtracker/kingnetcare-c64bf73749f5.json:/app/dist/src/secrets/google/gcs-kingnetcare.json
+      # HTTPS 金鑰(線上環境不需要)
+      - /Users/harold/localhost-key.pem:/dist/secrets/ssl/private-key.pem
+      - /Users/harold/localhost.pem:/dist/secrets/ssl/public-certificate.pem
+        
+  nginx:
+    image: nginx:stable-alpine
+    container_name: my-backend-nginx
+    restart: always
+    networks:
+      - bug_tracker_mynet
+    depends_on:
+      - api
+    ports:
+      - "8081:80"
+      - "4431:443"
+    volumes:
+      - /Users/harold/docker/bugtracker2/nginx/html:/usr/share/nginx/html
+      - /Users/harold/localhost-key.pem:/etc/nginx/cert/localhost-key.pem
+      - /Users/harold/localhost.pem:/etc/nginx/cert/localhost.pem
+      - /Users/harold/docker/bugtracker2/nginx/conf.d:/etc/nginx/conf.d
+      - /Users/harold/docker/bugtracker2/nginx/logs:/var/log/nginx
+#      - /home/ubuntu/work/nginx/cert:/etc/nginx/cert
+#      - /etc/localtime:/etc/localtime
+
+networks:
+  # 網路連到另一個DockerCompose:"bug_tracker"的 mynet
+  bug_tracker_mynet:
+    external: true
+

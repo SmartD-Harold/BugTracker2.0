@@ -1,0 +1,69 @@
+pool:
+  vmImage: ubuntu-22.04 
+
+stages:
+- stage: CI_Deploy
+  jobs:
+  - job: VariablePrepare
+    displayName: Variable Prepare
+    steps:
+    - bash: |
+        echo "BuildId: $(Build.BuildId)"
+        echo "BuildNumber: $(Build.BuildNumber)"
+        echo "SourceBranch: $(Build.SourceBranch)"
+        source=$(Build.SourceBranch);
+        
+        echo "Source: $source"
+        env="$(echo $source | cut -d \/ -f 3 )"
+        echo "EnvStage: $env"
+        
+        if [ $env = master ]; then envGroup=prod;
+        elif [ $env = main ]; then envGroup=prod; 
+        elif [ $env = staging ]; then envGroup=staging; 
+        else envGroup=dev; 
+        fi
+
+        DockerImageName=$(DockerImageName);
+
+        echo "envGroup: $envGroup"
+        echo "DockerImageName: $DockerImageName"
+        echo "##vso[task.setvariable variable=ENV_GROUP;isoutput=true]$envGroup"
+        echo "##vso[task.setvariable variable=DOCKER_IMAGE_NAME;isoutput=true]$DockerImageName"
+      displayName: 'Get ENV variable'
+      name: EnvVal
+
+  - job: DockerDeploy
+    displayName: Docker Deploy
+    dependsOn: VariablePrepare
+    condition: succeeded()
+    variables:
+      ENV_GROUP: $[ dependencies.VariablePrepare.outputs['EnvVal.ENV_GROUP'] ]
+      DOCKER_IMAGE_NAME: $[ dependencies.VariablePrepare.outputs['EnvVal.DOCKER_IMAGE_NAME'] ]
+    steps:
+    - bash: |
+        echo "DockerBuildEnv: $(ENV_GROUP)"
+        echo "DockerImageName: $(DOCKER_IMAGE_NAME)"
+      displayName: 'show Variable'
+
+    - task: Docker@0
+      displayName: 'Build an image'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryConnection: '$(DockerRegistryConnection)'
+        dockerFile: './docker/dockerfile/nestjs/Dockerfile'
+        buildArguments: |
+          DOCKER_VER=$(ENV_GROUP)
+          APP_VERSION=$(Build.BuildNumber)
+        imageName: '$(DOCKER_IMAGE_NAME):$(Build.BuildNumber)'
+        includeLatestTag: true
+        defaultContext: false
+        context: .
+          
+    - task: Docker@0
+      displayName: 'Push an image'
+      inputs:
+        containerregistrytype: 'Container Registry'
+        dockerRegistryConnection: '$(DockerRegistryConnection)'
+        action: 'Push an image'
+        imageName: '$(DOCKER_IMAGE_NAME):$(Build.BuildNumber)'
+        includeLatestTag: true

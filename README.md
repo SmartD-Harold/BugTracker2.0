@@ -1,73 +1,101 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# BugTracker Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## 目錄
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+- [開發環境](#開發環境)
+    - [👉 Node.js](#-nodejs)
+    - [👉 npm](#-npm)
+- [專案運行](#專案運行)
+- [專案結構](#專案結構)
+- [命名規範](#命名規範)
+- [注意事項](#注意事項)
 
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Installation
-
-```bash
-$ pnpm install
+### 開發環境
+#### 👉 Node.js
+1. 安裝 [Node.js 18.18.0(LTS)](https://nodejs.org/en/blog/release/v18.18.0)
+2. 確認安裝
+```sh
+node --version
 ```
 
-## Running the app
-
-```bash
-# development
-$ pnpm run start
-
-# watch mode
-$ pnpm run start:dev
-
-# production mode
-$ pnpm run start:prod
+#### 👉 npm
+1. 安裝 [npm 10.5.0](https://www.npmjs.com/package/npm/v/10.5.0)
+```
+npm install
+```
+2. 安裝 pnpm
+```
+npm install -g pnpm
 ```
 
-## Test
+### 專案運行
+**環境設定對應 .env 環境**
 
-```bash
-# unit tests
-$ pnpm run test
+開發指令
+- 🔥 ```pnpm run dev``` (dev環境)
+- 🔥 ```pnpm run serve:prod``` (正式環境)
 
-# e2e tests
-$ pnpm run test:e2e
+打包指令
+- 🔥 ```pnpm run build``` (正式環境)
 
-# test coverage
-$ pnpm run test:cov
-```
+### 專案結構 - NestJS
+- src 執行目錄
+  - decorators　全域裝飾器
+  - interceptors　全域過濾器
+  - types　全域類型定義
+  - modules　模組
+    - bugtracker bugtracker模組(toDB)
+    - main 主模組(API)
+    - mantisbt mantisbt模組(toDB)
+    - mantisbt-api mantisbt-api模組(toAPI)
+  - secrets 機敏資料
+    - google google金鑰
+    - ssl 本地SSL憑證
+  - source 資料來源
+    - bugtracker　bugtracker的資料來源(內部資料由自行維護)
+      - custom　自定義資料
+      - seeder　自訂資料集
+    - smartdaily　smartdaily外部資料(每日排程下載更新)
+  - utils　共用工具
+    - axios　api-axios實例
+    - cls 非同步本地儲存
+    - dayjs　日期處理
+    - self　自定義方法
+    - typeorm　typeorm實例
+  - app.controller.ts　全域控制器
+  - app.module.ts　全域模組
+  - main.ts　入口文件
+- test　測試目錄
+- config　環境設定檔
+  - configuration.config.ts　環境變數對應設定檔
+  - development.env　開發環境設定檔
+  - docker.env　docker環境設定檔
+- dist　程式打包發布目錄
+- .eslintrc.js
+- .gitignore
+- .prettierrc
+- nest-cli.json
+- package.json
+- tsconfig.build.json
+- tsconfig.json
 
-## Support
+### 命名規範
+camelCase
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- 檔案 file : bugtracker-categories.module.ts
+- 變數 variable : myUserName
+- 方法 function : getUserInfo()
 
-## Stay in touch
+### 注意事項
+- 本專案使用 NestJS 框架
+- 本專案使用 MySQL 作為資料庫
+- 本專案使用 TypeORM 作為資料庫操作
+- 本專案使用 Axios 作為 API 請求
+- 本專案使用 DayJS 作為日期處理
+- 本專案使用 Class-Validator 作為資料驗證
+- 本專案使用 Class-Transformer 作為資料轉換
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-## License
-
-Nest is [MIT licensed](LICENSE).
+#### Database
+- Module-bugtracker: bugtracker
+- Module-mantisbt: mantisbt
